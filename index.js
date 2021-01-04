@@ -4,6 +4,7 @@ const express = require('express')
 const app = express()
 const  ytdl = require('ytdl-core')
 const extractAudio = require('ffmpeg-extract-audio')
+const port = process.env.PORT || 3000
 
 
 
@@ -52,5 +53,5 @@ async function convertMp4ToMp3(title){
 
 
 
-app.listen(3000,()=>{console.log('listening');})
+app.listen(port,()=>{console.log('listening');})
 
