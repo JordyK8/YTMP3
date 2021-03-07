@@ -2,15 +2,24 @@ const fetch = require('node-fetch')
 const fs = require('fs')
 const express = require('express')
 const app = express()
-const  ytdl = require('ytdl-core')
+const ytdl = require('ytdl-core')
 const extractAudio = require('ffmpeg-extract-audio')
 const port = process.env.PORT || 3000
 
 const music = [
     {
-        artist: 'Infected Mushroom',
-        title: 'Heavy Weight',
-        album: 'Vicious Delicious'
+        artist: 'Billy Talent',
+        title: 'This Suffering',
+        album: 'Billy Talent II',
+        fileName: 'Billy Talent - This Suffering (Official Music Video).mp3',
+        filePath: './music/Billy Talent - This Suffering (Official Music Video).mp3'
+    },
+    {
+        artist: 'Slipknot',
+        title: 'Snuff Acoustic',
+        album: 'Dunno',
+        fileName: 'SLIPKNOT - Snuff (ACOUSTIC COVER).mp3',
+        filePath: './music/SLIPKNOT - Snuff (ACOUSTIC COVER).mp3'
     }
 ]
 
@@ -26,7 +35,7 @@ app.get('/', (req, res ) => {
 })
 app.post('/music/find', async (req, res) => {
     const filter = req.body.filter.toLowerCase().trim()
-    let foundMusic = music.map((item) => {
+    let foundMusic = music.filter((item) => {
         const fieldsToFilter = Object.keys(item)
         const searchObject = fieldsToFilter.map((field) => {
             return item[`${field}`].toLowerCase().includes(filter)
@@ -38,8 +47,17 @@ app.post('/music/find', async (req, res) => {
     res.send(foundMusic)
 })
 
-app.get('/data', (req, res) => {
-    res.send({audioFile: fs.readFileSync('./SLIPKNOT - Snuff (ACOUSTIC COVER).mp3')})
+app.post('/music/play', (req, res) => {
+    const searchArray = req.body.data.split('-')
+    console.log(searchArray);
+    const searchPath = music.filter((item) => {
+        if (item.title.toLowerCase().trim() == searchArray[0].toLowerCase().trim() && item.artist.toLowerCase().trim() == searchArray[1].toLowerCase().trim()) {
+            return item
+        }
+    })
+    console.log(searchPath);
+    res.send({audioFile: fs.readFileSync(searchPath[0].filePath)})
+
 })
 app.post('/', async (req, res) => {
     const { url } = req.body
