@@ -27,7 +27,6 @@
         container: '#waveform'
     });
     const getAudio = (url, text) => {
-        console.log(url, text);
         const data = postData(url, text)
         .then(async (data) => {
             const file = data.audioFile
@@ -50,8 +49,8 @@
     }
 
 async function searchMusic() {
+    document.getElementById('musicList').innerHTML = ''
     const response = await postData('http://localhost:3000/music/find',{  filter: document.getElementById('search').value })
-    console.log(response);
     response.forEach((item) => {
         if(item){
         let li = document.createElement('li')
@@ -65,7 +64,6 @@ async function searchMusic() {
 }
     // Example POST method implementation:
 async function postData(url, data) {
-    console.log(data);
   // Default options are marked with *
   const response = await fetch(url, {
     method: 'POST', // *GET, POST, PUT, DELETE, etc.

@@ -5,23 +5,26 @@ const app = express()
 const ytdl = require('ytdl-core')
 const extractAudio = require('ffmpeg-extract-audio')
 const port = process.env.PORT || 3000
+const MusicService = require('./svc/MusicService.js')
 
-const music = [
-    {
-        artist: 'Billy Talent',
-        title: 'This Suffering',
-        album: 'Billy Talent II',
-        fileName: 'Billy Talent - This Suffering (Official Music Video).mp3',
-        filePath: './music/Billy Talent - This Suffering (Official Music Video).mp3'
-    },
-    {
-        artist: 'Slipknot',
-        title: 'Snuff Acoustic',
-        album: 'Dunno',
-        fileName: 'SLIPKNOT - Snuff (ACOUSTIC COVER).mp3',
-        filePath: './music/SLIPKNOT - Snuff (ACOUSTIC COVER).mp3'
-    }
-]
+const music = []
+function updateMusic() {
+    const files = MusicService.getFiles()
+    files.then((data) => {
+        data.forEach((file) => {
+            const fileArray = file.split('-')
+            music.push({
+                artist: fileArray[0].trim(),
+                title: fileArray[1].trim(),
+                fileName: file,
+                filePath: `./music/${file}`
+            })
+        })
+        console.log(music);
+    })
+}
+updateMusic()
+
 
 
 app.use(express.static('public'))
@@ -69,8 +72,12 @@ app.post('/', async (req, res) => {
             res.download(file);
         }, 3000)
         setTimeout(async () => {
-            fs.unlinkSync(`${videoData.title}.mp3`)
-        }, 10000)
+            fs.renameSync(`${videoData.title}.mp3`,`./music/${videoData.title}.mp3`, (err, res) => {
+                if(err) console.log(err)
+                console.log('res');
+            })
+            updateMusic()
+        }, 15000)
     } catch (err) {
         console.log(err);
     }
