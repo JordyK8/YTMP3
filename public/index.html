@@ -11,15 +11,21 @@
     <input type="string" name="url" placeholder="video url here!">
     <input type="submit" value="submit">
 </form>
-
+<br>
     <label for="">Search Music</label>
     <input id="search" type="string" name="filter" placeholder="Find music">
     <button onclick="searchMusic()">search</button>
+<br>
+<br>
+    <label for="">Search New Music</label>
+    <input id="searchNew" type="string" name="filter" placeholder="Find music">
+    <button onclick="findNewMusic()">search</button>
 
 
 <button onclick="getAudio()" >Get Audio</button>
 
 <ul id="musicList"></ul>
+<ul id="newMusicList"></ul>
 <div id="waveform"></div>
 <script src="https://unpkg.com/wavesurfer.js"></script>
 <script>
@@ -62,6 +68,26 @@ async function searchMusic() {
         }
     })
 }
+
+async function findNewMusic() {
+    document.getElementById('newMusicList').innerHTML = ''
+    const response = await postData('http://localhost:3000/music/find/online',{  filter: document.getElementById('searchNew').value })
+    response.forEach((obj) => {
+        let li = document.createElement('li')
+        let p = document.createElement('p')
+        let img = document.createElement('img')
+        p.textContent = obj.title
+        img.setAttribute('src', obj.img)
+        li.appendChild(p)
+        li.appendChild(img)
+        li.addEventListener('click', (e) => {
+            console.log(e.target)
+        })
+        document.getElementById('newMusicList').appendChild(li)
+
+    })
+}
+
     // Example POST method implementation:
 async function postData(url, data) {
   // Default options are marked with *

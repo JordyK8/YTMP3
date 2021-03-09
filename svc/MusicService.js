@@ -5,7 +5,6 @@ class MusicService {
         const data = await fs.readdirSync('./music')
         return data
     }
-    
 
 }
 module.exports = MusicService

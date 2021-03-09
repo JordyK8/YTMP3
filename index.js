@@ -6,6 +6,7 @@ const ytdl = require('ytdl-core')
 const extractAudio = require('ffmpeg-extract-audio')
 const port = process.env.PORT || 3000
 const MusicService = require('./svc/MusicService.js')
+const ScraperService = require('./svc/ScraperService.js')
 
 const music = []
 function updateMusic() {
@@ -20,7 +21,6 @@ function updateMusic() {
                 filePath: `./music/${file}`
             })
         })
-        console.log(music);
     })
 }
 updateMusic()
@@ -49,6 +49,15 @@ app.post('/music/find', async (req, res) => {
     })
     res.send(foundMusic)
 })
+
+app.post('/music/find/online', async (req, res) => {
+    const searchString = req.body.filter.replace(' ', '+')
+    const scraper = new ScraperService(`https://www.youtube.com/results?search_query=${searchString}`)
+    const data = await scraper.fetchUrlWithPuppeteer()
+    res.send(data)
+    
+})
+
 
 app.post('/music/play', (req, res) => {
     const searchArray = req.body.data.split('-')
