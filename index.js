@@ -90,6 +90,7 @@ app.post('/', async (req, res) => {
     } catch (err) {
         console.log(err);
     }
+    res.send('New Music added: ')
 })
 
 async function createVideoFile(url) {

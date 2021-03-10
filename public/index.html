@@ -55,6 +55,7 @@
     }
 
 async function searchMusic() {
+    document.getElementById('newMusicList').innerHTML = ''
     document.getElementById('musicList').innerHTML = ''
     const response = await postData('http://localhost:3000/music/find',{  filter: document.getElementById('search').value })
     response.forEach((item) => {
@@ -70,22 +71,34 @@ async function searchMusic() {
 }
 
 async function findNewMusic() {
+     document.getElementById('musicList').innerHTML = ''
     document.getElementById('newMusicList').innerHTML = ''
     const response = await postData('http://localhost:3000/music/find/online',{  filter: document.getElementById('searchNew').value })
     response.forEach((obj) => {
         let li = document.createElement('li')
         let p = document.createElement('p')
         let img = document.createElement('img')
+        let div = document.createElement('div')
+        img.setAttribute('videoUrl', obj.url)
         p.textContent = obj.title
+        p.setAttribute('videoUrl', obj.url)
         img.setAttribute('src', obj.img)
-        li.appendChild(p)
-        li.appendChild(img)
-        li.addEventListener('click', (e) => {
-            console.log(e.target)
+        div.appendChild(img)
+        div.appendChild(p)
+        li.appendChild(div)
+        img.addEventListener('click', (e) => {
+            const url = e.target.getAttribute('videourl')
+            loadAudio('http://localhost:3000/', { url: url })
         })
         document.getElementById('newMusicList').appendChild(li)
-
     })
+}
+const loadAudio = (url, text) => {
+        const data = postData(url, text)
+        .then(async (data) => {
+            console.log(data);
+            document.getElementById('newMusicList').innerHTML = data
+        })
 }
 
     // Example POST method implementation:

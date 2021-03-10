@@ -14,25 +14,29 @@ class Scraper {
       const page = await browser.newPage();
       await page.goto(this.url);
       const html = await page.content();
-      console.log($('ytd-thumbnail-overlay-time-status-renderer > span', html).attr('aria-label'));
       const videoTitles = [];
       await $('#video-title', html).each(function () {
-        if (videoTitles.length <= 5) {
+        if (videoTitles.length <= 3) {
           return videoTitles.push($(this).text().trim().replace('\n','').replace('+',''));
         }
         return false;
       });
       const videoUrls = [];
       await $('#video-title', html).each(function () {
-        if (videoUrls.length <= 5) {
+        if (videoUrls.length <= 3) {
           return videoUrls.push(`https://youtube.com/${$(this).attr('href')}`);
         }
         return false;
       });
       const videoImgs = [];
+      let count = 0;
       await $('img', html).each(function () {
-        if (videoImgs.length <= 5) {
-          return videoImgs.push($(this).attr('src'));
+        if (count <= 3) {
+          if ($(this).attr('width') == 360) {
+            videoImgs.push($(this).attr('src'));
+            return count++
+          }
+          return count 
         }
         return false;
       });
